@@ -55,22 +55,3 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   });
 });
-
-// ========================== МОЖНО РЕДАКТИРОВАТЬ ================================
-// contenteditable="true"
-
-// ЗАКРАШИВАНИЕ КНОПОК! РАБОТАЕТ И ВЫВОДИТ В КОНСОЛЬ
-// function init() {
-//   const btnClickHandler = (btnb) => {
-//     btnb.style.background = "yellow";
-//     console.log("Вы нажали на какую-то кнопку");
-//   };
-//   listTodo.addEventListener("click", (event) => {
-//     if (event.target.classList.contains("delete-button")) {
-//       btnClickHandler(event.target);
-//     } else {
-//       console.log("Нажал на ");
-//     }
-//   });
-// }
-// init();
