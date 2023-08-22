@@ -1,6 +1,7 @@
 body {
   font-family: Arial, sans-serif;
   background-color: #f5f5f5;
+  font-size: 1.4em;
 }
 
 .container {
@@ -79,4 +80,10 @@ form {
 }
 .edit-button:hover {
   background-color: #0f4bcd;
+}
+
+input:checked + .todo-text {
+  text-decoration: line-through;
+  text-decoration-thickness: 2px;
+  color: rgba(0, 0, 0, 0.3);
 }

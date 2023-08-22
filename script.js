@@ -1,44 +1,61 @@
 const input = document.querySelector("#task-input");
 const addBtn = document.querySelector("#add-task");
-const listTodo = document.querySelector("#listTodo");
+let listTodo = document.querySelector("#listTodo");
 const deleteBtn = document.querySelector(".delete-button");
 const editBtn = document.querySelector(".edit-button");
 const divTasks = document.querySelector(".task-list"); // Тут завернуты кнопки, строка и чекбокс
 const form = document.querySelector("#form");
+let isEditing = false; // Открыта кнопка редактирования
 
 todoList = [];
 
+if (localStorage.getItem("todoList")) {
+  todoList = JSON.parse(localStorage.getItem("todoList"));
+  todoList.forEach((todo) => (listTodo.innerHTML += addToTodo(todo)));
+}
+
 addBtn.addEventListener("click", addFunc);
+
+input.focus();
+
+function addToTodo(todo) {
+  return `<div id="${todo.id}" class="task-list"> 
+     <input type="checkbox" />
+     <div class="todo-text" >${todo.name}</div>
+     <button class="edit-button">Редактировать</button>
+     <button data-action="delete" class="delete-button">Удалить</button> 
+   </div>`;
+}
+function saveLocalStorage() {
+  localStorage.setItem("todoList", JSON.stringify(todoList));
+}
 
 // Добаление задач в список
 function addFunc() {
   let todo = {};
   todo.name = input.value;
   todo.id = Date.now();
-  listTodo.innerHTML += `<div id="${todo.id}" class="task-list"> 
-  <input type="checkbox" />
-  <div class="todo-text" >${todo.name}</div>
-  <button class="edit-button">Редактировать</button>
-  <button data-action="delete" class="delete-button">Удалить</button> 
-</div>`; // Редактирование при добавлении тег div текста contenteditable="true"
+  if (input.value == "") return;
+  listTodo.innerHTML += addToTodo(todo);
   input.value = "";
   todoList.push(todo);
-  console.log(todoList);
+  saveLocalStorage();
 }
 
 //  Удаление задач из списка
 function deleteFunc(arr) {
+  isEditing = true;
   function btnClickHandler(btnEvent) {
     const findId = parseInt(btnEvent.parentElement.id, 10);
     const findIndex = arr.findIndex((item) => item.id === findId);
     btnEvent.parentElement.remove();
     arr.splice(findIndex, 1);
+    saveLocalStorage();
   }
   // Редактирование
   function editFunc(btnEvent) {
     const findId = parseInt(btnEvent.parentElement.id, 10);
     const findIndex = arr.findIndex((item) => item.id === findId);
-    // btnEvent.textContent = "Сохранить";
     const parentElement = btnEvent.parentElement;
     const textElement = parentElement.querySelector(".todo-text");
     const inputElement = document.createElement("input");
@@ -52,10 +69,8 @@ function deleteFunc(arr) {
       textElement.textContent;
       textElement.textContent = this.value;
       parentElement.replaceChild(textElement, this);
-      console.log(findIndex + " это findIndex");
       arr[findIndex].name = textElement.textContent;
-
-      // btnEvent.textContent = "Редактировать";
+      saveLocalStorage();
     });
   }
   listTodo.addEventListener("click", (event) => {
@@ -69,17 +84,11 @@ function deleteFunc(arr) {
 
 deleteFunc(todoList);
 
-// Запрещаем отправлять форму на Enter и привязываем Enter к кнопке "Добавить"
 document.addEventListener("DOMContentLoaded", function () {
   form.addEventListener("keydown", function (event) {
-    if (event.key === "Enter") {
+    if (event.key === "Enter" && isEditing) {
       event.preventDefault();
+      addBtn.click();
     }
   });
-  // Привязываем Enter к кнопке "Добавить"
-  // document.addEventListener("keydown", function (event) {
-  //   if (event.key === "Enter") {
-  //     addBtn.click();
-  //   }
-  // });
 });
