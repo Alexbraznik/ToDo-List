@@ -20,7 +20,9 @@ input.focus();
 
 function addToTodo(todo) {
   return `<div id="${todo.id}" class="task-list"> 
-     <input type="checkbox" />
+     <input type="checkbox" id="${todo.id}"  ${
+    todo.isChecked ? "checked" : ""
+  }/>
      <div class="todo-text" >${todo.name}</div>
      <button class="edit-button">Редактировать</button>
      <button data-action="delete" class="delete-button">Удалить</button> 
@@ -35,10 +37,20 @@ function addFunc() {
   let todo = {};
   todo.name = input.value;
   todo.id = Date.now();
+  todo.isChecked = false;
   if (input.value == "") return;
   listTodo.innerHTML += addToTodo(todo);
   input.value = "";
   todoList.push(todo);
+  saveLocalStorage();
+}
+
+function saveChbx(event) {
+  const cbx = event.target;
+  const findId = parseInt(cbx.parentElement.id, 10);
+  const findIndex = todoList.findIndex((item) => item.id === findId);
+
+  todoList[findIndex].isChecked = cbx.checked;
   saveLocalStorage();
 }
 
@@ -78,6 +90,8 @@ function deleteFunc(arr) {
       btnClickHandler(event.target);
     } else if (event.target.classList.contains("edit-button")) {
       editFunc(event.target);
+    } else if (event.target.type === "checkbox") {
+      saveChbx(event);
     }
   });
 }
